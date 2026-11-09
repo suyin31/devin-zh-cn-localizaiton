@@ -3,8 +3,11 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
-if ($AppRoot) {
-    $env:DEVIN_APP_ROOT = (Resolve-Path -LiteralPath $AppRoot).ProviderPath
+. (Join-Path $PSScriptRoot 'preflight.ps1')
+$resolvedAppRoot = Get-DevinPatchAppRoot -RequestedAppRoot $AppRoot
+if ($resolvedAppRoot) {
+    $env:DEVIN_APP_ROOT = $resolvedAppRoot
+    Assert-DevinClosed -AppRoot $resolvedAppRoot
 }
 
 $entry = Join-Path $PSScriptRoot 'restore.mjs'

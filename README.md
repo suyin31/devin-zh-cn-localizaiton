@@ -6,7 +6,9 @@
 
 ## 安装
 
-需要 Windows PowerShell 和 Node.js。先正常退出 Devin，然后在本项目目录运行：
+需要 Windows PowerShell 和 Node.js。安装、刷新或还原补丁前，先正常退出目标安装目录中的 Devin。脚本会检查对应的 `Devin.exe` 是否仍在运行；若无法确认进程路径或应用尚未退出，会停止且不改动文件。
+
+在本项目目录运行：
 
 ```powershell
 .\deploy.ps1 -AppRoot 'X:\Path\To\Devin\resources\app'
@@ -18,7 +20,7 @@
 
 ## 更新词条
 
-编辑 `devin-zh-cn-localizer.js` 后运行：
+编辑 `devin-zh-cn-localizer.js`，确认 Devin 已退出后运行：
 
 ```powershell
 .\refresh.ps1
@@ -28,7 +30,7 @@
 
 ## 还原
 
-运行：
+确认 Devin 已退出后运行：
 
 ```powershell
 .\restore.ps1

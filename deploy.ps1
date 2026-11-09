@@ -3,12 +3,9 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
-if ($AppRoot) {
-    $env:DEVIN_APP_ROOT = (Resolve-Path -LiteralPath $AppRoot).ProviderPath
-}
-if (-not $env:DEVIN_APP_ROOT) {
-    throw 'Pass the Devin resources/app folder with -AppRoot.'
-}
+. (Join-Path $PSScriptRoot 'preflight.ps1')
+$env:DEVIN_APP_ROOT = Get-DevinPatchAppRoot -RequestedAppRoot $AppRoot -Required
+Assert-DevinClosed -AppRoot $env:DEVIN_APP_ROOT
 
 $entry = Join-Path $PSScriptRoot 'deploy.mjs'
 & node $entry
