@@ -46,6 +46,14 @@
 node .\extract-english-labels.mjs 'X:\Path\To\Devin\resources\app'
 ```
 
+要列出词典和通用规则尚未覆盖的候选文案（最多显示 500 条），加上 `--missing`：
+
+```powershell
+node .\extract-english-labels.mjs 'X:\Path\To\Devin\resources\app' --missing
+```
+
+候选结果仍需人工筛选；产品名称、资源名称和由界面动态生成的文字不一定需要添加固定词条。
+
 翻译时保留变量、快捷键、HTML 标签和格式占位符。聊天内容、代码、终端内容和输入框中的用户文本会跳过。
 
 ## 反馈与翻译建议

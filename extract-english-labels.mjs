@@ -1,7 +1,10 @@
 import fs from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 
-const appRoot = process.argv[2] || process.env.DEVIN_APP_ROOT;
+const args = process.argv.slice(2);
+const missingOnly = args.includes("--missing");
+const appRoot = args.find((argument) => !argument.startsWith("--")) || process.env.DEVIN_APP_ROOT;
 if (!appRoot) throw new Error("Pass the Devin resources/app folder or set DEVIN_APP_ROOT.");
 const bundlePath = path.join(appRoot, "out/vs/workbench/windsurf-chat-client/index.js");
 const source = fs.readFileSync(bundlePath, "utf8");
@@ -84,8 +87,44 @@ for (const match of source.matchAll(pattern)) {
 }
 
 if (!catalogs) throw new Error("No English UI message catalogs were found in this build.");
+const localizerPath = path.join(path.dirname(fileURLToPath(import.meta.url)), "devin-zh-cn-localizer.js");
+const localizerSource = fs.readFileSync(localizerPath, "utf8");
+const declaration = localizerSource.indexOf("const dictionary = Object.freeze({");
+const dictionaryStart = localizerSource.indexOf("{", declaration);
+const dictionaryEnd = localizerSource.indexOf("\n  });", dictionaryStart);
+if (declaration < 0 || dictionaryStart < 0 || dictionaryEnd < 0) {
+  throw new Error("The localization dictionary could not be read.");
+}
+const dictionary = JSON.parse(localizerSource.slice(dictionaryStart, dictionaryEnd).trim() + "}");
+const foldedDictionary = new Map();
+for (const [key, value] of Object.entries(dictionary)) {
+  const folded = key.toLocaleLowerCase();
+  if (foldedDictionary.has(folded) && foldedDictionary.get(folded) !== value) foldedDictionary.set(folded, null);
+  else if (!foldedDictionary.has(folded)) foldedDictionary.set(folded, value);
+}
+const translationPatterns = [
+  /^(\d+)\s+days?\s+ago$/i, /^(\d+)\s+hours?\s+ago$/i, /^(\d+)\s+minutes?\s+ago$/i,
+  /^(\d+)\s+seconds?\s+ago$/i, /^Notifications\s+(alt\+T)$/i,
+  /^Tip: Change Devin's model and capabilities\s*\(([^)]+)\)$/i,
+  /^(Back|Forward|Toggle Sidebar|Skip to main content)\s*(\([^)]*\))$/i,
+  /^Last fetched:\s*(.+)$/i, /^(\d+)\s+of\s+(\d+)\s+items? still need input\.?$/i,
+  /^(\d+)\s+results?$/i, /^(\d+)\s+repositories$/i, /^Options for\s+(.+)$/i,
+  /^Change shortcut\s+(.+?)\s+for\s+(.+)$/i, /^Remove\s+(.+?)\s+from\s+(.+)$/i,
+  /^Published\s+(.+)$/i, /^Remove\s+(.+)$/i, /^(\d+)\s+sessions?$/i, /^(\d+)\s+tasks?$/i
+];
+function hasTranslation(label) {
+  const trimmed = label.trim();
+  if (Object.prototype.hasOwnProperty.call(dictionary, trimmed)) return true;
+  if (foldedDictionary.get(trimmed.toLocaleLowerCase())) return true;
+  if (translationPatterns.some((pattern) => pattern.test(trimmed))) return true;
+  const punctuation = trimmed.match(/^(.+?)([.!?…]+)$/);
+  return !!(punctuation && hasTranslation(punctuation[1]));
+}
+
 console.log(`English UI catalogs=${catalogs} candidates=${counts.size}`);
 const rows = [...counts]
-  .filter(([label, count]) => count >= 3 && /^[\x20-\x7E]+$/.test(label))
+  .filter(([label, count]) => (missingOnly || count >= 3) && /^[\x20-\x7E]+$/.test(label))
+  .filter(([label]) => !missingOnly || !hasTranslation(label))
   .sort((a, b) => b[1] - a[1] || a[0].length - b[0].length);
+if (missingOnly) console.log(`Untranslated candidate phrases=${rows.length}`);
 console.log(rows.slice(0, 500).map(([label, count]) => `${count}\t${label}`).join("\n"));
