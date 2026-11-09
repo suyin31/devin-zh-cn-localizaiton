@@ -28,7 +28,7 @@ if (requestedAppRoot && requestedAppRoot !== appRoot) fail("The manifest points 
 const packageJson = JSON.parse(fs.readFileSync(path.join(appRoot, "package.json"), "utf8"));
 const productPath = path.join(appRoot, "product.json");
 const productJson = JSON.parse(fs.readFileSync(productPath, "utf8"));
-if (packageJson.version !== manifest.appVersion || productJson.commit !== manifest.appCommit) {
+if (packageJson.version !== manifest.appVersion || (manifest.desktopVersion && productJson.windsurfVersion !== manifest.desktopVersion) || productJson.commit !== manifest.appCommit) {
   fail("Devin has been updated since this patch was installed. Restoration stopped to protect the newer installation.");
 }
 

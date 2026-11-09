@@ -1,0 +1,44 @@
+name: 安装或兼容性问题
+description: 报告安装、更新、还原或界面补丁问题
+title: "[兼容性] "
+body:
+  - type: input
+    id: desktop-version
+    attributes:
+      label: Devin Desktop 版本
+      placeholder: 3.12.32
+    validations:
+      required: true
+  - type: input
+    id: package-version
+    attributes:
+      label: package.json 版本
+      placeholder: 1.141.2
+    validations:
+      required: false
+  - type: input
+    id: commit
+    attributes:
+      label: product.json commit
+      description: 可选；不要粘贴账号令牌或其他凭据。
+    validations:
+      required: false
+  - type: textarea
+    id: error
+    attributes:
+      label: 报错全文或实际现象
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: 复现步骤
+    validations:
+      required: false
+  - type: textarea
+    id: context
+    attributes:
+      label: 其他信息或截图
+      description: 截图中请先遮挡账号、文件路径、令牌等隐私信息。
+    validations:
+      required: false

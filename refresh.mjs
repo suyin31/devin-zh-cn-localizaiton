@@ -120,9 +120,10 @@ const pkg = JSON.parse(fs.readFileSync(path.join(appRoot, "package.json"), "utf8
 const productPath = path.join(appRoot, "product.json");
 const productBytes = fs.readFileSync(productPath);
 const product = JSON.parse(productBytes.toString("utf8"));
-if (pkg.version !== manifest.appVersion || product.commit !== manifest.appCommit) {
+if (pkg.version !== manifest.appVersion || (manifest.desktopVersion && product.windsurfVersion !== manifest.desktopVersion) || product.commit !== manifest.appCommit) {
   fail("Devin has been updated since this patch was installed. No files were changed.");
 }
+manifest.desktopVersion ||= product.windsurfVersion;
 
 const sourceBytes = fs.readFileSync(localizerSource);
 const sourceText = sourceBytes.toString("utf8");

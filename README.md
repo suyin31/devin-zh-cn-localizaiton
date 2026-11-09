@@ -2,7 +2,7 @@
 
 为 Devin Desktop 增补简体中文界面翻译。补丁包含运行时界面翻译和 Devin 内置文字目录翻译，词条集中维护在 `devin-zh-cn-localizer.js`。
 
-> 这是社区维护的非官方项目，与 Cognition 或 Devin 无关。当前安装脚本只针对 Devin Desktop **1.141.2**（commit `1126aba4a596c3bb4c3a3b10f472e10448be1fd8`）做过核对；其他版本会被脚本拒绝，避免误改文件。
+> 这是社区维护的非官方项目，与 Cognition 或 Devin 无关。当前核对的版本为 Devin Desktop **3.12.32**（内部 package 版本 `1.141.2`，commit `1126aba4a596c3bb4c3a3b10f472e10448be1fd8`）。版本信息集中在 `supported-build.json`；其他版本会被脚本拒绝，避免误改文件。官方发布记录见 [Devin Desktop releases](https://docs.devin.ai/desktop/releases)。
 
 ## 安装
 
@@ -45,6 +45,10 @@ node .\extract-english-labels.mjs 'X:\Path\To\Devin\resources\app'
 ```
 
 翻译时保留变量、快捷键、HTML 标签和格式占位符。聊天内容、代码、终端内容和输入框中的用户文本会跳过。
+
+## 反馈与翻译建议
+
+请在 GitHub 的 [Issues](https://github.com/suyin31/devin-zh-cn-localizaiton/issues) 新建反馈；也可以在对应 Issue 下补充评论。翻译建议请附 Devin Desktop 版本、所在页面、英文原文、当前显示内容和期望译文。兼容性问题请附报错全文和复现步骤。截图请先遮住账号信息、文件路径、令牌等隐私内容。
 
 ## 限制
 

@@ -1,0 +1,40 @@
+name: 翻译建议
+description: 报告英文漏译或提出更合适的简体中文译法
+title: "[翻译建议] "
+body:
+  - type: input
+    id: desktop-version
+    attributes:
+      label: Devin Desktop 版本
+      description: 可在“关于”页面查看版本号。
+      placeholder: 3.12.32
+    validations:
+      required: true
+  - type: input
+    id: page
+    attributes:
+      label: 页面或功能位置
+      placeholder: 例如：设置 > 应用设置
+    validations:
+      required: true
+  - type: textarea
+    id: source-text
+    attributes:
+      label: 英文原文和当前显示内容
+      description: 请提供完整文字；如果目前已是中文，也请附当前译文。
+    validations:
+      required: true
+  - type: textarea
+    id: suggested-translation
+    attributes:
+      label: 建议译文
+      description: 说明你希望显示的简体中文译法。
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: 上下文或截图
+      description: 截图中请先遮挡账号、文件路径、令牌等隐私信息。
+    validations:
+      required: false

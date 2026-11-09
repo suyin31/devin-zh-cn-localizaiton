@@ -6,8 +6,10 @@ import { fileURLToPath } from "node:url";
 const taskRoot = path.dirname(fileURLToPath(import.meta.url));
 const stateRoot = path.join(process.env.APPDATA || process.env.USERPROFILE || taskRoot, "DevinZhCnLocalization");
 const appRoot = process.env.DEVIN_APP_ROOT ? path.resolve(process.env.DEVIN_APP_ROOT) : null;
-const expectedVersion = "1.141.2";
-const expectedCommit = "1126aba4a596c3bb4c3a3b10f472e10448be1fd8";
+const supportedBuild = JSON.parse(fs.readFileSync(path.join(taskRoot, "supported-build.json"), "utf8"));
+const expectedPackageVersion = supportedBuild.packageVersion;
+const expectedDesktopVersion = supportedBuild.desktopVersion;
+const expectedCommit = supportedBuild.commit;
 const manifestPath = path.join(stateRoot, "manifest.json");
 const runId = new Date().toISOString().replace(/[-:.TZ]/g, "");
 const backupRelRoot = path.join("backup", runId);
@@ -48,8 +50,8 @@ if (fs.existsSync(localizerTarget)) fail("A localization script already exists i
 const packageJson = JSON.parse(readApp("package.json").toString("utf8"));
 const productBytes = readApp("product.json");
 const productJson = JSON.parse(productBytes.toString("utf8"));
-if (packageJson.version !== expectedVersion || productJson.commit !== expectedCommit) {
-  fail(`This patch is for Devin ${expectedVersion} (${expectedCommit}); the installed build is ${packageJson.version} (${productJson.commit}).`);
+if (packageJson.version !== expectedPackageVersion || productJson.windsurfVersion !== expectedDesktopVersion || productJson.commit !== expectedCommit) {
+  fail(`This patch is verified for Devin Desktop ${expectedDesktopVersion}, package ${expectedPackageVersion} (${expectedCommit}); the installed build is Devin Desktop ${productJson.windsurfVersion}, package ${packageJson.version} (${productJson.commit}).`);
 }
 if (!productJson.checksums || typeof productJson.checksums !== "object") fail("Devin's recorded checksum list was not found.");
 
@@ -122,7 +124,8 @@ try {
   fs.writeFileSync(localizerTarget, sourceBytes);
   localizerCreated = true;
   const manifest = {
-    appVersion: expectedVersion,
+    appVersion: expectedPackageVersion,
+    desktopVersion: expectedDesktopVersion,
     appCommit: expectedCommit,
     appRoot,
     backupRoot: backupRelRoot,
@@ -139,6 +142,6 @@ try {
   throw error;
 }
 
-console.log(`Applied the local Simplified Chinese UI patch to Devin ${expectedVersion}.`);
+console.log(`Applied the local Simplified Chinese UI patch to Devin Desktop ${expectedDesktopVersion} (package ${expectedPackageVersion}).`);
 console.log("Original files and checksum values are saved in a dated backup folder.");
 console.log("Devin was not closed; the patch takes effect after you restart it yourself.");
