@@ -63,15 +63,28 @@ function collect(value) {
   }
 }
 
+function isDefaultEnglishCatalog(catalog, offset) {
+  const keys = Object.keys(catalog);
+  const isUiCatalog = keys.includes("artifactShares") || keys.includes("guide");
+  if (!isUiCatalog) return false;
+
+  // Devin embeds its English fallback catalogs in the main bundle and places
+  // translated catalogs in webpack modules such as `e.exports=JSON.parse(...)`.
+  const prefix = source.slice(Math.max(0, offset - 32), offset);
+  return !/\w\.exports=$/.test(prefix);
+}
+
 for (const match of source.matchAll(pattern)) {
   try {
     const catalog = JSON.parse(decodeJsString(match[1]));
+    if (!isDefaultEnglishCatalog(catalog, match.index)) continue;
     catalogs++;
     collect(catalog);
   } catch {}
 }
 
-console.log(`catalogs=${catalogs} candidates=${counts.size}`);
+if (!catalogs) throw new Error("No English UI message catalogs were found in this build.");
+console.log(`English UI catalogs=${catalogs} candidates=${counts.size}`);
 const rows = [...counts]
   .filter(([label, count]) => count >= 3 && /^[\x20-\x7E]+$/.test(label))
   .sort((a, b) => b[1] - a[1] || a[0].length - b[0].length);

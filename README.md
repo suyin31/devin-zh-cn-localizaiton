@@ -38,7 +38,7 @@
 
 ## 维护词条
 
-词条位于 `devin-zh-cn-localizer.js` 顶部的 `dictionary` 对象。`extract-english-labels.mjs` 可从匹配版本的 Devin 文件中整理常见英文界面文本：
+词条位于 `devin-zh-cn-localizer.js` 顶部的 `dictionary` 对象。`extract-english-labels.mjs` 会从匹配版本中整理默认英文界面文本，并排除程序内置的其他语言目录：
 
 ```powershell
 node .\extract-english-labels.mjs 'X:\Path\To\Devin\resources\app'
