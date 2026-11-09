@@ -1,0 +1,12 @@
+# Local installation state and proprietary files backed up from Devin
+manifest*.json
+backup/
+.local-state/
+
+# Local configuration and generated files
+.env*
+config.local*
+*.log
+node_modules/
+Thumbs.db
+Desktop.ini
