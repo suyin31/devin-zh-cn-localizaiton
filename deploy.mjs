@@ -17,6 +17,7 @@ const backupRoot = path.join(stateRoot, backupRelRoot);
 const localizerSource = path.join(taskRoot, "devin-zh-cn-localizer.js");
 const localizerRel = "out/vs/code/electron-browser/workbench/devin-zh-cn-localizer.js";
 const marker = "/* DEVIN ZH CN LOCALIZER V2 */";
+const legacyLocalizerSha256 = "0676f4ea127b7252b148ac1c8f29d348d4c3b3efa46763fe1dd7285fd46f904d";
 
 function fail(message) {
   throw new Error(message);
@@ -67,6 +68,47 @@ const checksumTargets = new Map([
 const originals = new Map();
 for (const rel of [...checksumTargets.keys(), "product.json"]) {
   originals.set(rel, rel === "product.json" ? productBytes : readApp(rel));
+}
+
+const legacyBundleRels = [
+  "out/vs/workbench/windsurf-chat-client/index.js",
+  "out/vs/sessions/sessions.desktop.main.js"
+];
+const legacyMarker = Buffer.from(`\n;\n${marker}`, "utf8");
+const hasLegacyMarker = legacyBundleRels.map((rel) => originals.get(rel).includes(legacyMarker));
+let migratedLegacyPatch = false;
+if (hasLegacyMarker.some(Boolean)) {
+  if (!hasLegacyMarker.every(Boolean)) fail("An incomplete legacy localization patch was found. No files were changed.");
+  if (fs.existsSync(localizerTarget)) fail("A legacy patch and a separate localization script are both present. No files were changed.");
+  if (originals.get("out/vs/code/electron-browser/workbench/workbench.html").toString("utf8").includes("devin-zh-cn-localizer.js")) {
+    fail("A legacy patch also changes the workbench startup page. No files were changed.");
+  }
+
+  for (const rel of legacyBundleRels) {
+    const installed = originals.get(rel);
+    const checksumKey = checksumTargets.get(rel);
+    if (checksum(installed) !== productJson.checksums[checksumKey]) {
+      fail(`The recorded checksum for legacy-patched file ${rel} does not match. No files were changed.`);
+    }
+    const markerAt = installed.lastIndexOf(legacyMarker);
+    if (markerAt < 0 || markerAt !== installed.indexOf(legacyMarker)) {
+      fail(`The legacy localization marker in ${rel} is ambiguous. No files were changed.`);
+    }
+
+    if (installed.length < markerAt + legacyMarker.length + 2 || installed[installed.length - 1] !== 0x0a || installed[installed.length - 2] !== 0x0a) {
+      fail(`The legacy localization block in ${rel} is incomplete. No files were changed.`);
+    }
+    const legacySource = installed.subarray(markerAt + 3, installed.length - 1);
+    if (sha256(legacySource) !== legacyLocalizerSha256) {
+      fail(`The legacy localization block in ${rel} is not a recognized version. No files were changed.`);
+    }
+
+    originals.set(rel, installed.subarray(0, markerAt));
+    productJson.checksums[checksumKey] = checksum(originals.get(rel));
+  }
+
+  originals.set("product.json", Buffer.from(`${JSON.stringify(productJson, null, 2)}\n`, "utf8"));
+  migratedLegacyPatch = true;
 }
 
 for (const [rel, key] of checksumTargets) {
@@ -143,5 +185,6 @@ try {
 }
 
 console.log(`Applied the local Simplified Chinese UI patch to Devin Desktop ${expectedDesktopVersion} (package ${expectedPackageVersion}).`);
+if (migratedLegacyPatch) console.log("Recognized and replaced the exact legacy patch; the clean recovered files were saved in the backup.");
 console.log("Original files and checksum values are saved in a dated backup folder.");
 console.log("Devin was not closed; the patch takes effect after you restart it yourself.");

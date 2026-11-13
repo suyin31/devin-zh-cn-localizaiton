@@ -2,7 +2,7 @@
 
 为 Devin Desktop 增补简体中文界面翻译。补丁包含运行时界面翻译和 Devin 内置文字目录翻译，词条集中维护在 `devin-zh-cn-localizer.js`。
 
-> 这是社区维护的非官方项目，与 Cognition 或 Devin 无关。当前核对的版本为 Devin Desktop **3.12.32**（内部 package 版本 `1.141.2`，commit `1126aba4a596c3bb4c3a3b10f472e10448be1fd8`）。版本信息集中在 `supported-build.json`；其他版本会被脚本拒绝，避免误改文件。官方发布记录见 [Devin Desktop releases](https://docs.devin.ai/desktop/releases)。
+> 这是社区维护的非官方项目，与 Cognition 或 Devin 无关。当前核对的版本为 Devin Desktop **3.12.59**（内部 package 版本 `1.141.2`，commit `0122b42e158c7ca62960222fb9725f087cd9544f`）。版本信息集中在 `supported-build.json`；其他版本会被脚本拒绝，避免误改文件。官方发布记录见 [Devin Desktop releases](https://docs.devin.ai/desktop/releases)。
 
 ## 安装
 
@@ -17,6 +17,8 @@
 `AppRoot` 应指向同时包含 `package.json` 和 `product.json` 的 `resources\app` 文件夹。脚本会核对版本和原始文件校验值，再备份并应用补丁；完成后重新打开 Devin。
 
 安装记录和原始文件备份保存在 `%APPDATA%\DevinZhCnLocalization`，不会写入 Git 仓库。
+
+如果安装目录残留仓库早期版本的完整补丁、但没有安装记录，脚本仅在两份内嵌词库和校验值都匹配已知旧版时自动替换，并把还原后的原始文件存入备份。无法确认的残留或不完整补丁会停止安装，不会覆盖文件。
 
 ## 更新词条
 
@@ -62,7 +64,7 @@ node .\extract-english-labels.mjs 'X:\Path\To\Devin\resources\app' --missing
 
 ## 限制
 
-- Devin 更新可能覆盖补丁；请等待兼容版本发布后再重新安装。
+- Devin 自动更新会替换本地文件，因此更新重启后汉化补丁会消失。请先查看 `supported-build.json`：仅当它与已安装版本一致时，退出 Devin 后重新运行安装脚本。若版本不匹配，请等待本项目核对并支持该版本；脚本会拒绝修改未验证的版本。
 - 补丁修改本机安装目录中的前端文件和校验记录。不要在安装过程中更新 Devin。
 - Devin 自带的部分原文、扩展提供的文字和服务器返回内容不一定能被本地补丁覆盖。
 

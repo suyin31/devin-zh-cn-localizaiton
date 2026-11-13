@@ -1,7 +1,7 @@
 {
-  "desktopVersion": "3.12.32",
+  "desktopVersion": "3.12.59",
   "packageVersion": "1.141.2",
-  "commit": "1126aba4a596c3bb4c3a3b10f472e10448be1fd8",
-  "releaseDate": "2026-11-08",
+  "commit": "0122b42e158c7ca62960222fb9725f087cd9544f",
+  "releaseDate": "2026-11-12",
   "releaseNotes": "https://docs.devin.ai/desktop/releases"
 }
