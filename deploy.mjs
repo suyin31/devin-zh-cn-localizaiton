@@ -14,6 +14,7 @@ const manifestPath = path.join(stateRoot, "manifest.json");
 const runId = new Date().toISOString().replace(/[-:.TZ]/g, "");
 const backupRelRoot = path.join("backup", runId);
 const backupRoot = path.join(stateRoot, backupRelRoot);
+const manifestHistoryRoot = path.join(stateRoot, "manifest-history");
 const localizerSource = path.join(taskRoot, "devin-zh-cn-localizer.js");
 const localizerRel = "out/vs/code/electron-browser/workbench/devin-zh-cn-localizer.js";
 const marker = "/* DEVIN ZH CN LOCALIZER V2 */";
@@ -42,11 +43,15 @@ function replaceOnce(text, before, after, label) {
 }
 
 if (!appRoot) fail("Pass the Devin resources/app folder with -AppRoot or set DEVIN_APP_ROOT.");
-if (fs.existsSync(manifestPath)) fail("A localization patch is already recorded. Restore it before applying again.");
 if (fs.existsSync(backupRoot)) fail("The new backup folder already exists; no files were changed.");
 if (!fs.existsSync(localizerSource)) fail("The local Chinese localization script is missing.");
 const localizerTarget = path.join(appRoot, localizerRel);
-if (fs.existsSync(localizerTarget)) fail("A localization script already exists in the Devin installation; it was left untouched.");
+const previousManifestBytes = fs.existsSync(manifestPath) ? fs.readFileSync(manifestPath) : null;
+let previousManifest = null;
+if (previousManifestBytes) {
+  try { previousManifest = JSON.parse(previousManifestBytes.toString("utf8")); }
+  catch { fail("The existing localization manifest is unreadable. No files were changed."); }
+}
 
 const packageJson = JSON.parse(readApp("package.json").toString("utf8"));
 const productBytes = readApp("product.json");
@@ -59,6 +64,9 @@ if (!productJson.checksums || typeof productJson.checksums !== "object") fail("D
 const sourceBytes = fs.readFileSync(localizerSource);
 const sourceText = sourceBytes.toString("utf8");
 if (!sourceText.includes(marker)) fail("The localization script marker is missing.");
+if (!previousManifest && fs.existsSync(localizerTarget)) {
+  fail("A file named devin-zh-cn-localizer.js already exists in the Devin installation; it was left untouched.");
+}
 
 const checksumTargets = new Map([
   ["out/vs/workbench/windsurf-chat-client/index.js", "vs/workbench/windsurf-chat-client/index.js"],
@@ -68,6 +76,30 @@ const checksumTargets = new Map([
 const originals = new Map();
 for (const rel of [...checksumTargets.keys(), "product.json"]) {
   originals.set(rel, rel === "product.json" ? productBytes : readApp(rel));
+}
+const installedState = new Map(originals);
+
+let staleManifest = false;
+if (previousManifest) {
+  const previousAppRoot = typeof previousManifest.appRoot === "string" ? path.resolve(previousManifest.appRoot) : "";
+  if (previousAppRoot.toLowerCase() !== appRoot.toLowerCase()) {
+    fail("The existing localization manifest points to a different Devin installation. No files were changed.");
+  }
+  const sameBuild = previousManifest.appVersion === expectedPackageVersion &&
+    previousManifest.desktopVersion === expectedDesktopVersion &&
+    previousManifest.appCommit === expectedCommit;
+  if (sameBuild) fail("A localization patch is already recorded for this Devin build. No files were changed.");
+  if (fs.existsSync(localizerTarget) || originals.get("out/vs/workbench/windsurf-chat-client/index.js").includes(Buffer.from(marker, "utf8")) ||
+      originals.get("out/vs/sessions/sessions.desktop.main.js").includes(Buffer.from(marker, "utf8")) ||
+      originals.get("out/vs/code/electron-browser/workbench/workbench.html").toString("utf8").includes("devin-zh-cn-localizer.js")) {
+    fail("A previous patch manifest exists, but the installed files still contain localization changes. No files were changed.");
+  }
+  for (const [rel, key] of checksumTargets) {
+    if (checksum(originals.get(rel)) !== productJson.checksums[key]) {
+      fail(`The updated Devin file ${rel} does not match its recorded checksum. No files were changed.`);
+    }
+  }
+  staleManifest = true;
 }
 
 const legacyBundleRels = [
@@ -160,11 +192,17 @@ for (const [rel, original] of originals) {
   });
 }
 
-let localizerCreated = false;
+let staleManifestArchivePath = null;
+if (staleManifest) {
+  fs.mkdirSync(manifestHistoryRoot, { recursive: true });
+  staleManifestArchivePath = path.join(manifestHistoryRoot, `manifest-${runId}.json`);
+  fs.copyFileSync(manifestPath, staleManifestArchivePath, fs.constants.COPYFILE_EXCL);
+  fs.unlinkSync(manifestPath);
+}
+
 try {
   for (const [rel, bytes] of patched) fs.writeFileSync(path.join(appRoot, rel), bytes);
   fs.writeFileSync(localizerTarget, sourceBytes);
-  localizerCreated = true;
   const manifest = {
     appVersion: expectedPackageVersion,
     desktopVersion: expectedDesktopVersion,
@@ -177,14 +215,22 @@ try {
   };
   fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + "\n", "utf8");
 } catch (error) {
-  for (const [rel, original] of originals) {
+  for (const [rel, original] of installedState) {
     try { fs.writeFileSync(path.join(appRoot, rel), original); } catch {}
   }
-  try { if (localizerCreated && fs.existsSync(localizerTarget)) fs.unlinkSync(localizerTarget); } catch {}
+  try { if (fs.existsSync(localizerTarget)) fs.unlinkSync(localizerTarget); } catch {}
+  try { if (fs.existsSync(manifestPath)) fs.unlinkSync(manifestPath); } catch {}
+  try {
+    if (staleManifestArchivePath && fs.existsSync(staleManifestArchivePath)) {
+      fs.writeFileSync(manifestPath, previousManifestBytes);
+      fs.unlinkSync(staleManifestArchivePath);
+    }
+  } catch {}
   throw error;
 }
 
 console.log(`Applied the local Simplified Chinese UI patch to Devin Desktop ${expectedDesktopVersion} (package ${expectedPackageVersion}).`);
 if (migratedLegacyPatch) console.log("Recognized and replaced the exact legacy patch; the clean recovered files were saved in the backup.");
+if (staleManifestArchivePath) console.log("Archived the previous build's patch record after verifying that Devin had replaced its patched files.");
 console.log("Original files and checksum values are saved in a dated backup folder.");
 console.log("Devin was not closed; the patch takes effect after you restart it yourself.");
