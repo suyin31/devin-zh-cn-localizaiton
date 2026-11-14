@@ -2,6 +2,8 @@
 
 为 Devin Desktop 增补简体中文界面翻译。补丁包含运行时界面翻译和 Devin 内置文字目录翻译，词条集中维护在 `devin-zh-cn-localizer.js`。
 
+词条覆盖自动化列表与编辑流程、触发器、Webhook、预检查、运行记录和日程迁移，也覆盖 Devin IDE 中的工作区、编辑器、文件树、标签页、终端和搜索操作。Devin 服务端返回的模板说明、仓库或工作区名称，以及扩展自带的界面文字不一定能由本地词条覆盖；产品名称（例如 Devin IDE）保留原文。
+
 > 这是社区维护的非官方项目，与 Cognition 或 Devin 无关。当前核对的版本为 Devin Desktop **3.12.59**（内部 package 版本 `1.141.2`，commit `0122b42e158c7ca62960222fb9725f087cd9544f`）。版本信息集中在 `supported-build.json`；其他版本会被脚本拒绝，避免误改文件。官方发布记录见 [Devin Desktop releases](https://docs.devin.ai/desktop/releases)。
 
 ## 安装

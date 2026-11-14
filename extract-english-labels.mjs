@@ -109,9 +109,15 @@ const translationPatterns = [
   /^(Back|Forward|Toggle Sidebar|Skip to main content)\s*(\([^)]*\))$/i,
   /^Last fetched:\s*(.+)$/i, /^(\d+)\s+of\s+(\d+)\s+items? still need input\.?$/i,
   /^(\d+)\s+results?$/i, /^(\d+)\s+repositories$/i, /^Options for\s+(.+)$/i,
-  /^Edit\s+(.+)$/i,
+  /^Edit\s+(.+)$/i, /^Open (.+) in a new tab$/i, /^Workflow run in (.+)$/i,
   /^Change shortcut\s+(.+?)\s+for\s+(.+)$/i, /^Remove\s+(.+?)\s+from\s+(.+)$/i,
-  /^Published\s+(.+)$/i, /^Remove\s+(.+)$/i, /^(\d+)\s+sessions?$/i, /^(\d+)\s+tasks?$/i
+  /^Published\s+(.+)$/i, /^Remove\s+(.+)$/i, /^(\d+)\s+sessions?$/i,
+  /^(\d+)\+\s+sessions?$/i, /^(\d+)\s+automations?$/i, /^(\d+)\s+schedules?$/i,
+  /^No automation has all (\d+) metadata values?\. Try removing a filter or broadening your search\.$/i,
+  /^(\d+) automations? (?:is|are) hidden because you don't have permission to view (?:it|them)\.$/i,
+  /^(\d+) schedules? will change behavior when migrated; see the notes below$/i,
+  /^(\d+) automations? behaves? differently from (?:its|their) schedules?; see the notes below$/i,
+  /^(\d+)\s+tasks?$/i
 ];
 function hasTranslation(label) {
   const trimmed = label.trim();
