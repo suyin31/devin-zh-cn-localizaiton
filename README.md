@@ -10,6 +10,8 @@
 
 需要 Windows PowerShell 和 Node.js。安装、刷新或还原补丁前，先正常退出目标安装目录中的 Devin。脚本会检查对应的 `Devin.exe` 是否仍在运行；若无法确认进程路径或应用尚未退出，会停止且不改动文件。
 
+Devin IDE 的编辑器核心界面使用 VS Code 语言包，和本项目的网页界面词条分开设置。首次使用时，在 Devin 的扩展视图搜索并安装 Microsoft 的[中文（简体）语言包](https://marketplace.visualstudio.com/items?itemName=MS-CEINTL.vscode-language-pack-zh-hans)，然后按 `Ctrl+Shift+P`，运行 `Configure Display Language`，选择 `中文(简体)` 并重启 Devin。VS Code 官方说明了此语言切换方式和 `zh-cn` 区域代码：[显示语言文档](https://code.visualstudio.com/docs/configure/locales)。语言包位于用户扩展目录，补丁更新不会覆盖它；需要时也可在 `%APPDATA%\Devin\argv.json` 中设置 `{ "locale": "zh-cn" }` 后重启。
+
 在本项目目录运行：
 
 ```powershell
@@ -62,7 +64,7 @@ Devin 自动更新会替换安装目录里的补丁。Windows 用户可在补丁
 
 ## 维护词条
 
-词条位于 `devin-zh-cn-localizer.js` 顶部的 `dictionary` 对象。`extract-english-labels.mjs` 会从匹配版本中整理默认英文界面文本，并排除程序内置的其他语言目录：
+词条位于 `devin-zh-cn-localizer.js` 顶部的 `dictionary` 对象。`extract-english-labels.mjs` 会从匹配版本中整理默认英文界面文本、Devin 网页界面资源及自动化相关页面资源，并排除程序内置的其他语言目录：
 
 ```powershell
 node .\extract-english-labels.mjs 'X:\Path\To\Devin\resources\app'
@@ -81,6 +83,8 @@ node .\extract-english-labels.mjs 'X:\Path\To\Devin\resources\app' --missing --a
 ```
 
 候选结果仍需人工筛选；产品名称、资源名称和由界面动态生成的文字不一定需要添加固定词条。
+
+如需单独盘点 VS Code 编辑器核心英文目录，可增加 `--ide`。该目录有数万条程序文本；通常应使用上面的 Microsoft 中文语言包，不要把整份 IDE 目录词条复制到本项目词典。
 
 翻译时保留变量、快捷键、HTML 标签和格式占位符。聊天内容、代码、终端内容和输入框中的用户文本会跳过。
 

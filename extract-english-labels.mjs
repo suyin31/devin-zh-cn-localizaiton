@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 const args = process.argv.slice(2);
 const missingOnly = args.includes("--missing");
 const allCandidates = args.includes("--all");
+const includeIdeMessages = args.includes("--ide");
 const appRoot = args.find((argument) => !argument.startsWith("--")) || process.env.DEVIN_APP_ROOT;
 if (!appRoot) throw new Error("Pass the Devin resources/app folder or set DEVIN_APP_ROOT.");
 const bundlePath = path.join(appRoot, "out/vs/workbench/windsurf-chat-client/index.js");
@@ -56,7 +57,7 @@ let catalogs = 0;
 function collect(value) {
   if (typeof value === "string") {
     const text = value.trim();
-    if (text.length < 2 || text.length > 100 || !/[A-Za-z]/.test(text)) return;
+    if (text.length < 2 || text.length > 500 || !/[A-Za-z]/.test(text)) return;
     if (!/^[A-Za-z0-9\s,.'!?&()/:+\-–—%#@…’“”=]+$/.test(text)) return;
     if (!text.includes(" ")) return;
     counts.set(text, (counts.get(text) || 0) + 1);
@@ -88,6 +89,31 @@ for (const match of source.matchAll(pattern)) {
 }
 
 if (!catalogs) throw new Error("No English UI message catalogs were found in this build.");
+
+const assetDirectory = path.join(appRoot, "out/vs/workbench/devin-webapp-host/assets");
+let webAssetBundles = 0;
+if (fs.existsSync(assetDirectory)) {
+  const targetBundle = /(?:entry-host-editor-mode-menu|automation|schedule|trigger|webhook|preflight)/i;
+  const doubleQuotedString = /"((?:\\.|[^"\\])*)"/g;
+  const singleQuotedString = /'((?:\\.|[^'\\])*)'/g;
+  for (const name of fs.readdirSync(assetDirectory).filter((entry) => entry.endsWith(".js") && targetBundle.test(entry))) {
+    const bundle = fs.readFileSync(path.join(assetDirectory, name), "utf8");
+    for (const match of bundle.matchAll(doubleQuotedString)) collect(decodeJsString(match[1]));
+    for (const match of bundle.matchAll(singleQuotedString)) collect(decodeJsString(match[1]));
+    webAssetBundles++;
+  }
+}
+
+let ideMessageCount = 0;
+if (includeIdeMessages) {
+  const ideMessagesPath = path.join(appRoot, "out/nls.messages.json");
+  if (!fs.existsSync(ideMessagesPath)) throw new Error("The IDE English message catalog out/nls.messages.json was not found.");
+  const ideMessages = JSON.parse(fs.readFileSync(ideMessagesPath, "utf8"));
+  if (!Array.isArray(ideMessages)) throw new Error("The IDE English message catalog is not a JSON array.");
+  ideMessageCount = ideMessages.length;
+  collect(ideMessages);
+}
+
 const localizerPath = path.join(path.dirname(fileURLToPath(import.meta.url)), "devin-zh-cn-localizer.js");
 const localizerSource = fs.readFileSync(localizerPath, "utf8");
 const declaration = localizerSource.indexOf("const dictionary = Object.freeze({");
@@ -129,7 +155,7 @@ function hasTranslation(label) {
   return !!(punctuation && hasTranslation(punctuation[1]));
 }
 
-console.log(`English UI catalogs=${catalogs} candidates=${counts.size}`);
+console.log(`Devin English UI catalogs=${catalogs} web UI bundles=${webAssetBundles}${includeIdeMessages ? ` IDE messages=${ideMessageCount}` : ""} candidates=${counts.size}`);
 const rows = [...counts]
   .filter(([label, count]) => (missingOnly || count >= 3) && /^[\x20-\x7E]+$/.test(label))
   .filter(([label]) => !missingOnly || !hasTranslation(label))
