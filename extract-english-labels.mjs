@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 
 const args = process.argv.slice(2);
 const missingOnly = args.includes("--missing");
+const allCandidates = args.includes("--all");
 const appRoot = args.find((argument) => !argument.startsWith("--")) || process.env.DEVIN_APP_ROOT;
 if (!appRoot) throw new Error("Pass the Devin resources/app folder or set DEVIN_APP_ROOT.");
 const bundlePath = path.join(appRoot, "out/vs/workbench/windsurf-chat-client/index.js");
@@ -133,5 +134,6 @@ const rows = [...counts]
   .filter(([label, count]) => (missingOnly || count >= 3) && /^[\x20-\x7E]+$/.test(label))
   .filter(([label]) => !missingOnly || !hasTranslation(label))
   .sort((a, b) => b[1] - a[1] || a[0].length - b[0].length);
+const displayLimit = allCandidates ? rows.length : 500;
 if (missingOnly) console.log(`Untranslated candidate phrases=${rows.length}`);
-console.log(rows.slice(0, 500).map(([label, count]) => `${count}\t${label}`).join("\n"));
+console.log(rows.slice(0, displayLimit).map(([label, count]) => `${count}\t${label}`).join("\n"));
