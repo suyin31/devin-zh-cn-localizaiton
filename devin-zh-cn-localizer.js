@@ -1736,7 +1736,111 @@
     "External systems POST to this inbox with the secret in an X-Webhook-Secret header. Deliveries have no reply surface: findings are recorded on the issue and in the session, and reported through any tool you name in the runbook.": "外部系统通过 POST 向此收件端发送请求，并在 X-Webhook-Secret 标头中提供密钥。此投递方式不支持回复：发现的问题会记录在工单和会话中，并通过你在运行手册中指定的工具报告。",
     "A Microsoft Teams automation stopped receiving messages from its channel. Devin AI may have been removed from the team, the channel may have been deleted, or a Teams admin may have revoked Devin's channel permissions. Add Devin AI back to the team, or update the automation.": "Microsoft Teams 自动化已停止接收其频道中的消息。Devin AI 可能已被移出团队、频道可能已删除，或 Teams 管理员可能已撤销 Devin 的频道权限。请将 Devin AI 重新加入团队，或更新此自动化。",
     "Auto-triage automations used for bugs and alerts triage should migrate to Devin Oncall for improved performance and cost efficiency. Devin Oncall uses an improved agent harness, enables smarter issue grouping, and optimized alerting and bug triage experience for your automation.": "用于漏洞和告警分诊的自动分诊工作流应迁移到 Devin Oncall，以提高性能和成本效率。Devin Oncall 使用改进的代理运行框架，支持更智能的问题归组，并优化自动化的告警与漏洞分诊体验。",
-    "Devin adds this webhook itself to every project its Bitbucket token administers. Use the steps below only for projects it cannot administer. A repository or project that already has a Devin webhook made by hand delivers each event twice once Devin adds its own, so remove the one made by hand.": "Devin 会使用 Bitbucket 令牌在其管理的每个项目中自行添加此 Webhook。仅对 Devin 无法管理的项目执行以下步骤。若代码仓库或项目中已经手动添加了 Devin Webhook，Devin 再添加一个后，每个事件都会投递两次，请删除手动添加的那个。"
+    "Devin adds this webhook itself to every project its Bitbucket token administers. Use the steps below only for projects it cannot administer. A repository or project that already has a Devin webhook made by hand delivers each event twice once Devin adds its own, so remove the one made by hand.": "Devin 会使用 Bitbucket 令牌在其管理的每个项目中自行添加此 Webhook。仅对 Devin 无法管理的项目执行以下步骤。若代码仓库或项目中已经手动添加了 Devin Webhook，Devin 再添加一个后，每个事件都会投递两次，请删除手动添加的那个。",
+    "Mine": "我的",
+    "Apps": "应用",
+    "Beta": "测试版",
+    "Let Devin find new ways to help": "让 Devin 发现更多可以帮忙的工作",
+    "Devin looks at your recent work to find repetitive tasks worth automating.": "Devin 会查看你最近的工作，找出适合自动化的重复任务。",
+    "Ask Devin for suggestions": "让 Devin 提供建议",
+    "Monitoring & Triage": "监控与分诊",
+    "CI/CD & Release": "CI/CD 与发布",
+    "Project Management": "项目管理",
+    "Triage Bug Reports": "缺陷报告分诊",
+    "Watches a Slack channel for bug reports — when one comes in, Devin triages it, investigates the root cause, and replies in the thread with its findings.": "监控 Slack 频道中的缺陷报告。收到报告后，Devin 会进行分诊、调查根因，并在线程中回复调查结果。",
+    "Triage Support Requests": "支持请求分诊",
+    "Watches your support channel — when a request comes in, Devin investigates the codebase and docs to draft an accurate reply in the thread and flags anything that needs escalation.": "监控支持频道。收到请求后，Devin 会调查代码库和文档，在线程中起草准确回复，并标记需要升级处理的事项。",
+    "Investigate Alerts Triggered": "调查触发的告警",
+    "When an alert lands in your Slack alerts channel, Devin uses the Datadog MCP to pull metrics, logs, and traces — then posts a root-cause analysis in the thread.": "Slack 告警频道收到告警时，Devin 会通过 Datadog MCP 获取指标、日志和追踪数据，并在线程中发布根因分析。",
+    "Fix Sentry Errors Daily": "每日修复 Sentry 错误",
+    "Every morning, Devin pulls the top unresolved Sentry errors, investigates each one, and opens fix PRs — so your team reviews fixes instead of triaging errors.": "每天早晨，Devin 会获取最主要的未解决 Sentry 错误，逐一调查并创建修复 PR，供团队审查。",
+    "Daily Error Report": "每日错误报告",
+    "Every morning, Devin scans Datadog for new and spiking errors across your services — then posts a concise error report to Slack.": "每天早晨，Devin 会在 Datadog 中扫描各服务新增和激增的错误，并将简明错误报告发送到 Slack。",
+    "Recurring Capacity Planning": "定期容量规划",
+    "On a schedule, Devin reviews usage and resource-utilization trends to forecast capacity needs — flagging services approaching their limits and recommending where to scale.": "Devin 会定期分析用量和资源利用率趋势，预测容量需求，标记接近上限的服务，并提出扩容建议。",
+    "Automatically fix failing CI checks on non-Devin PRs. Devin reads the build logs, identifies the root cause, pushes a fix, and verifies it passes.": "自动修复非 Devin 创建的 PR 中失败的 CI 检查。Devin 会读取构建日志、定位根因、推送修复并确认检查通过。",
+    "When someone comments /devin on a GitHub issue, Devin reads the issue, investigates the codebase, and opens a fix PR — turning any issue into an actionable code change.": "当有人在 GitHub Issue 中评论 /devin 时，Devin 会读取问题、调查代码库并创建修复 PR，将问题转化为具体代码更改。",
+    "Every Monday, Devin scans for outdated packages, reviews changelogs for breaking changes, and opens update PRs — grouped by risk level.": "每周一，Devin 会扫描过期依赖包，检查更新日志中的不兼容更改，并按风险等级分组创建更新 PR。",
+    "Weekly Changelog": "每周更新日志",
+    "Every Friday, Devin compiles merged PRs into a categorized changelog and opens a PR to update CHANGELOG.md.": "每周五，Devin 会将已合并的 PR 整理为分类更新日志，并创建 PR 更新 CHANGELOG.md。",
+    "Stale PR Cleanup": "清理长期未更新的 PR",
+    "A weekly scan for pull requests that haven't been updated in over a week. Devin checks for merge conflicts and posts a friendly nudge on each one.": "每周扫描超过一周未更新的拉取请求。Devin 会检查合并冲突，并逐一发布提醒。",
+    "Catch bugs in merged PRs": "检查已合并 PR 中的缺陷",
+    "Reviews every push to your main branch. When Devin is sure it found a real bug, it messages the person who merged the change and offers to fix it.": "审查主分支的每次推送。Devin 确认发现真实缺陷后，会通知合并更改的人员，并提出修复建议。",
+    "Catch dead code in merged PRs": "检查已合并 PR 中的无用代码",
+    "Reviews every push to your main branch. When Devin is sure the change left dead code behind, it messages the person who merged it and offers to remove it.": "审查主分支的每次推送。Devin 确认更改留下无用代码后，会通知合并更改的人员，并提出清理建议。",
+    "Dependency Vulnerability Scanner": "依赖漏洞扫描",
+    "Daily scan for known CVEs in your dependencies. Devin checks advisory databases, prioritizes by severity, and opens fix PRs.": "每天扫描依赖中的已知 CVE。Devin 会查询安全公告数据库，按严重程度确定优先级，并创建修复 PR。",
+    "Secret Scanner": "密钥泄露扫描",
+    "Daily scan for leaked credentials, API keys, and tokens in your codebase. Devin replaces hardcoded secrets with environment variable references and opens fix PRs.": "每天扫描代码库中泄露的凭据、API 密钥和令牌。Devin 会将硬编码密钥替换为环境变量引用，并创建修复 PR。",
+    "Code Pattern Enforcer": "代码规范一致性检查",
+    "Weekly comparison of your repo against a golden reference repository to identify deviations from established patterns and open alignment PRs.": "每周将你的代码仓库与标准参考仓库进行比较，找出偏离既定规范的地方，并创建统一规范的 PR。",
+    "OWASP Security Hardening": "OWASP 安全加固",
+    "Weekly scan for OWASP Top 10 vulnerabilities: injection flaws, XSS, missing auth checks, and insecure defaults — with fix PRs.": "每周扫描 OWASP 十大安全风险，包括注入漏洞、XSS、缺失的身份验证检查和不安全的默认配置，并创建修复 PR。",
+    "Cloudflare Security Audit": "Cloudflare 安全审计",
+    "Weekly review of Cloudflare audit logs to flag suspicious activity, configuration changes, and potential security issues.": "每周审查 Cloudflare 审计日志，标记可疑活动、配置更改和潜在安全问题。",
+    "Weekly Status Digest": "每周状态摘要",
+    "Every Monday, Devin compiles the past week's merged PRs into a concise status update and posts it to Notion.": "每周一，Devin 会将过去一周已合并的 PR 整理为简明状态更新，并发布到 Notion。",
+    "Sprint Progress Report": "迭代进度报告",
+    "A daily standup summary from Asana: Devin pulls task status across projects and posts a progress update to Slack.": "根据 Asana 生成每日站会摘要。Devin 会汇总各项目的任务状态，并将进度更新发送到 Slack。",
+    "Backlog Cleanup": "清理待办事项",
+    "A weekly pass over your Linear backlog: Devin closes stale and duplicate issues, flags untriaged ones, and fills in missing labels, priorities, and estimates.": "每周整理 Linear 待办事项。Devin 会关闭过期和重复问题，标记尚未分诊的问题，并补全缺失的标签、优先级和估算。",
+    "Optional": "可选",
+    "Agent definition": "代理定义",
+    "Decide what the agent should do on new events": "决定代理应如何处理新事件",
+    "Instructions": "指令",
+    "Describe what the agent should do": "描述代理应执行的工作",
+    "Launch sessions using this agent mode": "使用此代理模式启动会话",
+    "Select agent mode": "选择代理模式",
+    "Use this user identity when running sessions": "运行会话时使用此用户身份",
+    "Default System User": "默认系统用户",
+    "MCPs": "MCP 服务器",
+    "Search MCPs...": "搜索 MCP 服务器...",
+    "No MCPs available": "没有可用的 MCP 服务器",
+    "Add notification": "添加通知",
+    "No notifications configured.": "尚未配置通知。",
+    "Allow auto-start of child sessions": "允许自动启动子会话",
+    "Control network destinations sessions can access": "控制会话可访问的网络目标",
+    "Add domain": "添加域名",
+    "Copy all domains": "复制所有域名",
+    "Default (Ubuntu)": "默认（Ubuntu）",
+    "Metadata": "元数据",
+    "Add metadata": "添加元数据",
+    "Limits": "限制",
+    "Cap resource usage and invocation rate": "限制资源用量和调用频率",
+    "Spend limit per session": "每个会话的费用上限",
+    "Maximum spend for a single session": "单个会话的最高费用",
+    "per": "每",
+    "Enable queueing": "启用排队",
+    "Limit how many runs happen at once and let extra events wait in a queue": "限制同时运行的任务数量，让其他事件在队列中等待",
+    "Go Back": "返回",
+    "Go Forward": "前进",
+    "Title activity actions": "标题栏活动操作",
+    "Devin Settings": "Devin 设置",
+    "Codemaps": "代码地图",
+    "DeepWiki - New DeepWiki feature available": "DeepWiki - 有新功能可用",
+    "Show all commands": "显示所有命令",
+    "Find in files": "在文件中查找",
+    "Devin - Settings": "Devin - 设置",
+    "Free - Upgrade Now, Click to upgrade your plan": "免费版 - 立即升级，点击升级套餐",
+    "Devin Cloud Session": "Devin 云端会话",
+    "Close conversation": "关闭对话",
+    "Past Conversations": "历史对话",
+    "Actions": "操作",
+    "Close Devin panel": "关闭 Devin 面板",
+    "Message Devin in this session": "在此会话中向 Devin 发消息",
+    "Mode": "模式",
+    "Session folder": "会话文件夹",
+    "Message actions": "消息操作",
+    "Good response": "回答不错",
+    "Bad response": "回答有误",
+    "View response statistics": "查看回复统计",
+    "Duplicate session": "复制会话",
+    "Other actions": "其他操作",
+    "Thoughts": "思考过程",
+    "Report session": "报告会话问题",
+    "Tip: Search sessions and commands (": "提示：搜索会话和命令 (",
+    "Tip: Hide or show the sidebar (": "提示：隐藏或显示侧边栏 ("
   });
 
   const foldedDictionary = Object.create(null);
@@ -1756,7 +1860,11 @@
     [/^(\d+)\s+seconds?\s+ago$/i, function (_, n) { return n + " 秒前"; }],
     [/^Notifications\s+(alt\+T)$/i, function (_, shortcut) { return "通知 " + shortcut; }],
     [/^Tip: Change Devin's model and capabilities\s*\(([^)]+)\)$/i, function (_, shortcut) { return "提示：更改 Devin 的模型和功能（" + shortcut + "）"; }],
-    [/^(Back|Forward|Toggle Sidebar|Skip to main content)\s*(\([^)]*\))$/i, function (_, label, shortcut) { return (translated(label) || label) + " " + shortcut; }],
+    [/^(Back|Forward|Go Back|Go Forward|Agents|Toggle Sidebar|Skip to main content)\s*(\([^)]*\))$/i, function (_, label, shortcut) { return (translated(label) || label) + " " + shortcut; }],
+    [/^(\d+)\s+selected$/i, function (_, n) { return "已选择 " + n + " 项"; }],
+    [/^(\d+)\s+hours?$/i, function (_, n) { return n + " 小时"; }],
+    [/^(\d+)\s+minutes?$/i, function (_, n) { return n + " 分钟"; }],
+    [/^Context usage:\s*(\d+(?:\.\d+)?%)$/i, function (_, percent) { return "上下文使用量：" + percent; }],
     [/^Last fetched:\s*(.+)$/i, function (_, value) { return "上次获取：" + value; }],
     [/^(\d+)\s+of\s+(\d+)\s+items? still need input\.?$/i, function (_, remaining, total) { return `还有 ${remaining} 项需要填写（共 ${total} 项）`; }],
     [/^(\d+)\s+results?$/i, function (_, n) { return n + " 条结果"; }],
@@ -1796,6 +1904,7 @@
     ".file-name", ".filename", ".breadcrumb", ".path-label", ".tab-label",
     "[class*='transcript']", "[class*='messageContent']", "[class*='messageBody']"
   ].join(",");
+  const placeholderSelector = '[data-slate-placeholder="true"][contenteditable="false"]';
   const attributeNames = ["aria-label", "aria-description", "title", "placeholder", "data-placeholder", "alt"];
   const observedRoots = new WeakSet();
   const attachedFrames = new WeakSet();
@@ -1826,8 +1935,22 @@
     return null;
   }
 
+  function translateMenuTitle(title) {
+    if (!title || isProtected(title) || !title.parentElement?.matches('.menubar-menu-button[role="menuitem"]')) return;
+    const mnemonic = title.querySelector("mnemonic");
+    if (!mnemonic) return;
+    // The menu label is split around its mnemonic, which must retain its key.
+    const value = translated(title.textContent);
+    if (!value) return;
+    const doc = title.ownerDocument;
+    title.replaceChildren(doc.createTextNode(value + "("), mnemonic, doc.createTextNode(")"));
+  }
+
   function translateTextNode(node) {
-    if (!node || !node.parentElement || isProtected(node.parentElement)) return;
+    if (!node || !node.parentElement) return;
+    translateMenuTitle(node.parentElement.closest(".menubar-menu-title"));
+    if (!node.parentElement) return;
+    if (isProtected(node.parentElement) && !node.parentElement.closest(placeholderSelector)) return;
     const original = node.nodeValue || "";
     const value = translated(original);
     if (!value || value === original.trim()) return;
@@ -1891,8 +2014,11 @@
     }
     if (node.nodeType !== 1) return;
     translateAttributes(node);
-    if (!isProtected(node)) {
+    if (!isProtected(node) || node.closest(placeholderSelector)) {
       for (const child of node.childNodes) processNode(child);
+    } else {
+      // Slate marks its non-editable hint separately from the user's document.
+      for (const placeholder of node.querySelectorAll(placeholderSelector)) processNode(placeholder);
     }
     if (node.shadowRoot) observeRoot(node.shadowRoot);
     if (node.tagName === "IFRAME") observeFrame(node);

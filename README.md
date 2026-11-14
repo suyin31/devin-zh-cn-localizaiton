@@ -10,7 +10,7 @@
 
 需要 Windows PowerShell 和 Node.js。安装、刷新或还原补丁前，先正常退出目标安装目录中的 Devin。脚本会检查对应的 `Devin.exe` 是否仍在运行；若无法确认进程路径或应用尚未退出，会停止且不改动文件。
 
-Devin IDE 的编辑器核心界面使用 VS Code 语言包，和本项目的网页界面词条分开设置。首次使用时，在 Devin 的扩展视图搜索并安装 Microsoft 的[中文（简体）语言包](https://marketplace.visualstudio.com/items?itemName=MS-CEINTL.vscode-language-pack-zh-hans)，然后按 `Ctrl+Shift+P`，运行 `Configure Display Language`，选择 `中文(简体)` 并重启 Devin。VS Code 官方说明了此语言切换方式和 `zh-cn` 区域代码：[显示语言文档](https://code.visualstudio.com/docs/configure/locales)。语言包位于用户扩展目录，补丁更新不会覆盖它；需要时也可在 `%APPDATA%\Devin\argv.json` 中设置 `{ "locale": "zh-cn" }` 后重启。
+Devin IDE 的编辑器核心界面使用 VS Code 语言包。在 Devin 的扩展视图搜索并安装 Microsoft 的[中文（简体）语言包](https://marketplace.visualstudio.com/items?itemName=MS-CEINTL.vscode-language-pack-zh-hans)，然后按 `Ctrl+Shift+P`，运行 `Configure Display Language`，选择 `中文(简体)` 并重启 Devin。需要手动配置时，在 `%USERPROFILE%\.devin\argv.json` 中设置 `{ "locale": "zh-cn" }`，保留文件中的其他配置。Devin 使用的用户扩展目录和运行参数目录由 `product.json` 中的 `dataFolderName`（`.devin`）确定。相关机制见 [VS Code 显示语言文档](https://code.visualstudio.com/docs/configure/locales)。
 
 在本项目目录运行：
 
